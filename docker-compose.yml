@@ -1,0 +1,34 @@
+version: "3.0"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html
+    ports:
+      - 8000:80
+    depends_on:
+      - db
+    networks:
+      - was-it-app
+
+  db:
+    image: mysql:8.0.34
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-password}'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: '${DB_DATABASE:-todo_db}'
+      MYSQL_USER: '${DB_USERNAME:-dbuser}'
+      MYSQL_PASSWORD: '${DB_PASSWORD:-password}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    networks:
+      - was-it-app
+
+networks:
+  was-it-app:
+    driver: bridge
